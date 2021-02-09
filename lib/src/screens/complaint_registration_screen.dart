@@ -1,5 +1,6 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:camera/camera.dart';
+import 'package:image_picker/image_picker.dart';
 import '../blocs/complaint_registration/complaint_registration_provider.dart';
 import '../blocs/complaint_registration/complaint_registration_bloc.dart';
 import '../db/database_interface.dart';
@@ -10,6 +11,7 @@ class ComplaintRegistrationScreen extends StatelessWidget {
     final ComplaintRegistrationBloc bloc =
         ComplaintRegistrationProvider.of(context);
     final DatabaseInterface dbInteractor = DatabaseProvider.of(context);
+    final ImagePicker picker = ImagePicker();
 
     return Scaffold(
       appBar: AppBar(
@@ -17,12 +19,12 @@ class ComplaintRegistrationScreen extends StatelessWidget {
       ),
       body: Container(
         margin: EdgeInsets.all(20.0),
-        child: Column(
+        child: ListView(
           children: <Widget>[
             Container(margin: EdgeInsets.only(top: 25.0)),
             locationField(bloc),
             Container(margin: EdgeInsets.only(top: 25.0)),
-            imageField(bloc),
+            imageField(bloc, picker),
             Container(margin: EdgeInsets.only(top: 25.0)),
             issueField(bloc),
             Container(margin: EdgeInsets.only(top: 50.0)),
@@ -90,17 +92,22 @@ class ComplaintRegistrationScreen extends StatelessWidget {
     );
   }
 
-  Widget imageField(ComplaintRegistrationBloc bloc) {
+  Widget imageField(ComplaintRegistrationBloc bloc, ImagePicker picker) {
     return StreamBuilder(
       stream: bloc.readImage(),
       builder: (BuildContext context, streamSnapshot) {
         return Column(
           children: <Widget>[
-            streamSnapshot.hasData ? Image.file(streamSnapshot.data) : Text(""),
+            streamSnapshot.hasData
+                ? Image.file(File(streamSnapshot.data))
+                : Text(""),
             RaisedButton(
               child: Text("Obtain image"),
-              onPressed: () => Navigator.pushNamed(
-                  context, "/user_home/register_complaint/click_image"),
+              onPressed: () async {
+                final PickedFile pickedFile =
+                    await picker.getImage(source: ImageSource.camera);
+                if (pickedFile != null) bloc.changeImage(pickedFile.path);
+              },
             ),
           ],
         );
@@ -109,20 +116,36 @@ class ComplaintRegistrationScreen extends StatelessWidget {
   }
 
   Widget issueField(ComplaintRegistrationBloc bloc) {
-    return TextField(
-      decoration: InputDecoration(
-        border: OutlineInputBorder(),
-        hintText: "This road has way too many cracks to count",
-        labelText: "Issue Description",
-      ),
+    return StreamBuilder(
+      stream: bloc.readIssue(),
+      builder: (BuildContext context, streamSnapshot) {
+        return TextField(
+          onChanged: bloc.changeIssue,
+          decoration: InputDecoration(
+              border: OutlineInputBorder(),
+              hintText: "This road has way too many cracks to count",
+              labelText: "Issue Description",
+              errorText: streamSnapshot.error),
+        );
+      },
     );
   }
 
   Widget submitButton(
       ComplaintRegistrationBloc bloc, DatabaseInterface dbInteractor) {
-    return RaisedButton(
-      child: Text("Submit"),
-      onPressed: null,
+    return StreamBuilder(
+      stream: bloc.canRegister(),
+      builder: (BuildContext context, streamSnapshot) {
+        return RaisedButton(
+          child: Text("Submit"),
+          onPressed: streamSnapshot.hasData
+              ? () async {
+                  int insertionStatus = await bloc.registerData(dbInteractor);
+                  if (insertionStatus > 1) Navigator.pop(context);
+                }
+              : null,
+        );
+      },
     );
   }
 }

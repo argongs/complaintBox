@@ -17,6 +17,10 @@ class DatabaseInterface {
     return _loggedInUser;
   }
 
+  String getPathToCameraImage() {
+    return _pathToRecentCameraImage;
+  }
+
   void setPathToCameraImage(String newPath) {
     _pathToRecentCameraImage = newPath;
   }

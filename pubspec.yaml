@@ -34,6 +34,7 @@ dependencies:
   path_provider:
   sqflite:
   camera:
+  image_picker:
   location:
 
 dev_dependencies:

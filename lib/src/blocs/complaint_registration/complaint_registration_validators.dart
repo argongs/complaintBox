@@ -1,7 +1,7 @@
 import 'dart:async';
 
 class ComplaintRegistrationValidators {
-  static final int minCharInImage = 0;
+  static final int minCharInImage = 5;
   static final int minCharInIssue = 10;
   static final String incorrectLocationError =
       "Location field cannot be empty.";

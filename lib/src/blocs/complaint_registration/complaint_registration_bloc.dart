@@ -1,7 +1,8 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:rxdart/rxdart.dart';
 import 'package:location/location.dart';
-import 'package:camera/camera.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart'
     show getApplicationDocumentsDirectory;
 import 'complaint_registration_validators.dart';
@@ -31,7 +32,7 @@ class ComplaintRegistrationBloc with ComplaintRegistrationValidators {
   void changeImage(String newImage) => _imageController.sink.add(newImage);
   void changeIssue(String newIssue) => _issueController.sink.add(newIssue);
 
-  void registerData(DatabaseInterface dbInteractor) async {
+  Future<int> registerData(DatabaseInterface dbInteractor) async {
     final List<double> validLocation = _locationController.value;
     final String validImage = _imageController.value;
     final String validIssue = _issueController.value;
@@ -45,10 +46,11 @@ class ComplaintRegistrationBloc with ComplaintRegistrationValidators {
             issue: validIssue,
             imagePath: validImage));
 
-    if (insertionStatus > 0)
-      print("Complaint is now registered.");
-    else
-      print("Failed to perform complaint registration");
+    return insertionStatus;
+    // if (insertionStatus > 0)
+    //   print("Complaint is now registered.");
+    // else
+    //   print("Failed to perform complaint registration");
   }
 
   void obtainLocation() async {
