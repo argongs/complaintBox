@@ -59,6 +59,10 @@ class DatabaseInterface {
             locationAccuracy  DOUBLE      NOT NULL,
             issue             TEXT        NOT NULL,
             imagePath         TEXT        NOT NULL,
+            severity          INT         NOT NULL,
+            typeOfDefect      INT         NOT NULL,
+            length            DOUBLE      NOT NULL,
+            width             DOUBLE      NOT NULL,
             PRIMARY KEY (userName, timestamp),
             FOREIGN KEY (userName) REFERENCES $userTableName(userName)
           );
@@ -68,14 +72,6 @@ class DatabaseInterface {
         await newDatabase.execute('''
           INSERT INTO $userTableName(userName, emailID, password)
           VALUES      ('$defaultUserName', 'abc@example.com', ${defaultUserName.hashCode});
-        ''');
-
-        // Populate the complaint table
-        await newDatabase.execute('''
-          INSERT INTO 
-          $complaintTableName(userName, timestamp, latitude, longitude, locationAccuracy, imagePath, issue)
-          VALUES      
-          ('$defaultUserName', 0, 0, 0, 0, 'path/to/image', 'Something messed up!');
         ''');
       },
     );

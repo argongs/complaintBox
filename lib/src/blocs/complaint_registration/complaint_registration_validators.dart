@@ -5,8 +5,10 @@ class ComplaintRegistrationValidators {
   static final int minCharInIssue = 10;
   static final String incorrectLocationError =
       "Location field cannot be empty.";
-  static final String incorrectImageError = "Invalid image";
+  static final String incorrectImageError = "Image is required";
   static final String incorrectIssueError = "Issue field cannot be kept empty";
+  static final String incorrectLengthError = "Length has to be positive";
+  static final String incorrectWidthError = "Width has to be positive";
 
   // Validate location details
   final locationValidator =
@@ -39,6 +41,26 @@ class ComplaintRegistrationValidators {
         sink.add(issue);
       else
         sink.addError(incorrectIssueError);
+    },
+  );
+
+  final lengthValidator = StreamTransformer<double, double>.fromHandlers(
+    handleData: (length, sink) {
+      bool lengthIsAppropriate = (length > 0);
+      if (lengthIsAppropriate)
+        sink.add(length);
+      else
+        sink.addError(incorrectLengthError);
+    },
+  );
+
+  final widthValidator = StreamTransformer<double, double>.fromHandlers(
+    handleData: (width, sink) {
+      bool widthIsAppropriate = (width > 0);
+      if (widthIsAppropriate)
+        sink.add(width);
+      else
+        sink.addError(incorrectWidthError);
     },
   );
 }

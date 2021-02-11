@@ -2,12 +2,29 @@ import 'package:flutter/material.dart';
 import '../db/database_provider.dart';
 import '../db/database_interface.dart';
 
-class UserHomeScreen extends StatelessWidget {
+class UserHomeScreen extends StatefulWidget {
+  const UserHomeScreen({Key key}) : super(key: key);
+
+  @override
+  _UserHomeScreenState createState() => _UserHomeScreenState();
+}
+
+class _UserHomeScreenState extends State<UserHomeScreen> {
   Widget build(BuildContext context) {
     final DatabaseInterface dbInteractor = DatabaseProvider.of(context);
     return Scaffold(
       appBar: AppBar(
         title: Text("Hello ${dbInteractor.getLoggedInUserName()}!"),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.refresh),
+            onPressed: () {
+              setState(() {
+                print("Rebuilt the user home screen");
+              });
+            },
+          ),
+        ],
       ),
       body: FutureBuilder(
         future: dbInteractor.obtainComplaints(),

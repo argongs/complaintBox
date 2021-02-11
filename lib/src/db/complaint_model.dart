@@ -1,11 +1,9 @@
 class ComplaintModel {
   int timestamp;
-  double latitude;
-  double longitude;
-  double locationAccuracy;
-  String userName;
-  String imagePath;
-  String issue;
+  double latitude, longitude, locationAccuracy;
+  String userName, imagePath, issue;
+  int severity = 3, typeOfDefect = 1;
+  double length, width;
 
   ComplaintModel(
       {this.timestamp,
@@ -14,7 +12,11 @@ class ComplaintModel {
       this.locationAccuracy,
       this.userName,
       this.imagePath,
-      this.issue});
+      this.issue,
+      this.severity,
+      this.typeOfDefect,
+      this.length,
+      this.width});
 
   ComplaintModel.fromDB(Map<String, dynamic> parsedJSON) {
     timestamp = parsedJSON["timestamp"];
@@ -24,6 +26,10 @@ class ComplaintModel {
     userName = parsedJSON["userName"];
     imagePath = parsedJSON["imagePath"];
     issue = parsedJSON["issue"];
+    severity = parsedJSON["severity"];
+    typeOfDefect = parsedJSON["typeOfDefect"];
+    length = parsedJSON["length"];
+    width = parsedJSON["width"];
   }
 
   Map<String, dynamic> toMap() {
@@ -35,6 +41,13 @@ class ComplaintModel {
       "userName": userName,
       "imagePath": imagePath,
       "issue": issue,
+      "severity": severity,
+      "typeOfDefect": typeOfDefect,
+      "length": length,
+      "width": width,
     };
   }
+
+  static Map<String, int> severityMap = {"High": 1, "Medium": 2, "Low": 3};
+  static Map<String, int> defectMap = {"Pothole": 1, "Crack": 2};
 }
