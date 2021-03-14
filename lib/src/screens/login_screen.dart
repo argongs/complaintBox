@@ -8,33 +8,36 @@ class LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final LoginBloc bloc = LoginProvider.of(context);
     final DatabaseInterface dbInteractor = DatabaseProvider.of(context);
-    return Container(
-      margin: EdgeInsets.all(20.0),
-      child: Column(
-        children: <Widget>[
-          Container(margin: EdgeInsets.only(top: 25.0)),
-          userNameField(bloc),
-          Container(margin: EdgeInsets.only(top: 25.0)),
-          passwordField(bloc),
-          Container(margin: EdgeInsets.only(top: 50.0)),
-          submitButton(bloc, dbInteractor),
-          registrationArea(context),
-        ],
+    return Scaffold(
+      body: Container(
+        margin: EdgeInsets.all(20.0),
+        child: Column(
+          children: <Widget>[
+            Container(margin: EdgeInsets.only(top: 25.0)),
+            emailField(bloc),
+            Container(margin: EdgeInsets.only(top: 25.0)),
+            passwordField(bloc),
+            Container(margin: EdgeInsets.only(top: 50.0)),
+            submitButton(bloc, dbInteractor),
+            registrationArea(context),
+          ],
+        ),
       ),
     );
   }
 }
 
-Widget userNameField(LoginBloc bloc) {
+Widget emailField(LoginBloc bloc) {
   return StreamBuilder(
-    stream: bloc.readUserName(),
+    stream: bloc.readEmail(),
     builder: (BuildContext context, snapshot) {
       return TextField(
-        onChanged: bloc.changeUserName,
+        onChanged: bloc.changeEmail,
+        keyboardType: TextInputType.emailAddress,
         decoration: InputDecoration(
           border: OutlineInputBorder(),
-          hintText: "John_Doe",
-          labelText: "User Name",
+          hintText: "abc@example.com",
+          labelText: "Email ID",
           errorText: snapshot.error,
         ),
       );
@@ -70,6 +73,9 @@ Widget submitButton(LoginBloc bloc, DatabaseInterface dbInteractor) {
                 int submissionStatus = await bloc.submitData(dbInteractor);
                 if (submissionStatus == 0) {
                   Navigator.pushNamed(context, "/user_home");
+                } else {
+                  Scaffold.of(context).showSnackBar(
+                      SnackBar(content: Text("Incorrect Email or Password")));
                 }
               }
             : null,

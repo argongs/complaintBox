@@ -3,10 +3,13 @@ import 'dart:async';
 class RegistrationValidators {
   static final int minCharInUserName = 5;
   static final int minCharInEmail = 7;
+  static final int charInMobileNo = 10;
   static final int minCharInPassword = 5;
   static final String incorrectUserNameError =
       "User name should contain atleast $minCharInUserName charachters without space.";
   static final String incorrectEmailError = "Invalid email.";
+  static final String incorrectMobileNoError =
+      "Mobile no. should only contain 10 numerical digits";
   static final String incorrectPasswordError =
       "Password should contain atleast $minCharInPassword charachters.";
 
@@ -32,6 +35,17 @@ class RegistrationValidators {
         sink.addError(incorrectEmailError);
     },
   );
+  //Validate Mobile No.
+  final mobileNoValidator = StreamTransformer<String, String>.fromHandlers(
+      handleData: (mobile, sink) {
+    bool mobileNoIsLargeEnough = (mobile.length == charInMobileNo);
+
+    if (mobileNoIsLargeEnough)
+      sink.add(mobile);
+    else
+      sink.addError(incorrectMobileNoError);
+  });
+
   // Validate password
   final passwordValidator = StreamTransformer<String, String>.fromHandlers(
     handleData: (password, sink) {

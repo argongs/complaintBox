@@ -1,53 +1,59 @@
 class ComplaintModel {
-  int timestamp;
-  double latitude, longitude, locationAccuracy;
-  String userName, imagePath, issue;
-  int severity = 3, typeOfDefect = 1;
-  double length, width;
+  int id, userID;
+  DateTime timestamp;
+  double latitude, longitude;
+  String imagePath, description, shortDescription;
+  int severity = 3, typeOfDefect = 1, defectSubtype = 1, status = 1;
+  double length, width, depth;
 
   ComplaintModel(
-      {this.timestamp,
+      {this.userID,
       this.latitude,
       this.longitude,
-      this.locationAccuracy,
-      this.userName,
       this.imagePath,
-      this.issue,
+      this.description,
+      this.shortDescription,
       this.severity,
       this.typeOfDefect,
+      this.defectSubtype,
       this.length,
-      this.width});
+      this.width,
+      this.depth,
+      this.status});
 
   ComplaintModel.fromDB(Map<String, dynamic> parsedJSON) {
-    timestamp = parsedJSON["timestamp"];
+    id = parsedJSON["id"];
+    userID = parsedJSON["user_id"];
+    timestamp = DateTime.parse(parsedJSON["timestamp"]);
     latitude = parsedJSON["latitude"];
     longitude = parsedJSON["longitude"];
-    locationAccuracy = parsedJSON["locationAccuracy"];
-    userName = parsedJSON["userName"];
-    imagePath = parsedJSON["imagePath"];
-    issue = parsedJSON["issue"];
+    imagePath = parsedJSON["img_name"];
+    description = parsedJSON["description"];
+    shortDescription = parsedJSON["short_description"];
     severity = parsedJSON["severity"];
-    typeOfDefect = parsedJSON["typeOfDefect"];
+    typeOfDefect = parsedJSON["defect_id"];
+    defectSubtype = parsedJSON["subtype_id"];
     length = parsedJSON["length"];
     width = parsedJSON["width"];
+    depth = parsedJSON["depth"];
+    status = parsedJSON["status_id"];
   }
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
-      "timestamp": timestamp,
+      "user_id": userID,
       "latitude": latitude,
       "longitude": longitude,
-      "locationAccuracy": locationAccuracy,
-      "userName": userName,
-      "imagePath": imagePath,
-      "issue": issue,
+      "img_name": imagePath,
+      "description": description,
+      "short_description": shortDescription,
       "severity": severity,
-      "typeOfDefect": typeOfDefect,
+      "defect_id": typeOfDefect,
+      "subtype_id": defectSubtype,
       "length": length,
       "width": width,
+      "depth": depth,
+      "status_id": status
     };
   }
-
-  static Map<String, int> severityMap = {"High": 1, "Medium": 2, "Low": 3};
-  static Map<String, int> defectMap = {"Pothole": 1, "Crack": 2};
 }

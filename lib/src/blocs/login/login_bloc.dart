@@ -4,44 +4,42 @@ import 'login_validators.dart';
 import '../../db/database_interface.dart';
 
 class LoginBloc with LoginValidators {
-  final _userNameController = BehaviorSubject<String>();
+  final _emailController = BehaviorSubject<String>();
   final _passwordController = BehaviorSubject<String>();
 
   // Obtain the streams (after the contents of the streams are validated)
-  Stream<String> readUserName() =>
-      _userNameController.stream.transform(userNameValidator);
+  Stream<String> readEmail() =>
+      _emailController.stream.transform(emailValidator);
   Stream<String> readPassword() =>
       _passwordController.stream.transform(passwordValidator);
   Stream<bool> canSubmit() => Rx.combineLatest2(
-        readUserName(),
+        readEmail(),
         readPassword(),
-        (userName, password) => true,
+        (email, password) => true,
       );
 
   // Change user name and password
-  void changeUserName(String newUserName) =>
-      _userNameController.sink.add(newUserName);
+  void changeEmail(String newEmail) => _emailController.sink.add(newEmail);
   void changePassword(String newPassword) =>
       _passwordController.sink.add(newPassword);
 
   Future<int> submitData(DatabaseInterface dbInteractor) async {
-    final String validUserName = _userNameController.value;
+    final String validEmail = _emailController.value;
     final String validPassword = _passwordController.value;
-    final dbData = await dbInteractor.obtainUser(validUserName, validPassword);
+    final dbData = await dbInteractor.obtainUser(validEmail, validPassword);
 
     if (dbData == null) {
-      print("Invalid user name or password");
+      print("Invalid email or password");
       return 1;
     } else {
-      dbInteractor.updateLoggedInUserName(validUserName);
-      print("$validUserName is online now.");
+      print("$validEmail is online now.");
       return 0;
     }
   }
 
   // Close up the streams
   void dispose() {
-    _userNameController.close();
+    _emailController.close();
     _passwordController.close();
   }
 }

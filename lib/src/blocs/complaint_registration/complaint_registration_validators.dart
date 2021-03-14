@@ -2,13 +2,13 @@ import 'dart:async';
 
 class ComplaintRegistrationValidators {
   static final int minCharInImage = 5;
-  static final int minCharInIssue = 10;
+  static final int minCharInDescription = 10;
   static final String incorrectLocationError =
       "Location field cannot be empty.";
   static final String incorrectImageError = "Image is required";
-  static final String incorrectIssueError = "Issue field cannot be kept empty";
-  static final String incorrectLengthError = "Length has to be positive";
-  static final String incorrectWidthError = "Width has to be positive";
+  static final String incorrectDescriptionError =
+      "Description field cannot have less than 10 charachters";
+  static final String incorrectValueError = "+ve values only!";
 
   // Validate location details
   final locationValidator =
@@ -34,13 +34,13 @@ class ComplaintRegistrationValidators {
   );
 
   // Validate password
-  final issueValidator = StreamTransformer<String, String>.fromHandlers(
+  final descriptionValidator = StreamTransformer<String, String>.fromHandlers(
     handleData: (issue, sink) {
-      bool issueIsLargeEnough = (issue.length >= minCharInIssue);
-      if (issueIsLargeEnough)
+      bool descriptionIsLargeEnough = (issue.length >= minCharInDescription);
+      if (descriptionIsLargeEnough)
         sink.add(issue);
       else
-        sink.addError(incorrectIssueError);
+        sink.addError(incorrectDescriptionError);
     },
   );
 
@@ -50,17 +50,7 @@ class ComplaintRegistrationValidators {
       if (lengthIsAppropriate)
         sink.add(length);
       else
-        sink.addError(incorrectLengthError);
-    },
-  );
-
-  final widthValidator = StreamTransformer<double, double>.fromHandlers(
-    handleData: (width, sink) {
-      bool widthIsAppropriate = (width > 0);
-      if (widthIsAppropriate)
-        sink.add(width);
-      else
-        sink.addError(incorrectWidthError);
+        sink.addError(incorrectValueError);
     },
   );
 }

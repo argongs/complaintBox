@@ -8,21 +8,41 @@ class RegistrationScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final RegistrationBloc bloc = RegistrationProvider.of(context);
     final DatabaseInterface dbInteractor = DatabaseProvider.of(context);
-    return Container(
-      margin: EdgeInsets.all(20.0),
-      child: Column(
-        children: <Widget>[
-          Container(margin: EdgeInsets.only(top: 25.0)),
-          userNameField(bloc),
-          Container(margin: EdgeInsets.only(top: 25.0)),
-          emailField(bloc),
-          Container(margin: EdgeInsets.only(top: 25.0)),
-          passwordField(bloc),
-          Container(margin: EdgeInsets.only(top: 25.0)),
-          confirmPasswordField(bloc),
-          Container(margin: EdgeInsets.only(top: 50.0)),
-          registerButton(bloc, dbInteractor),
-        ],
+    final Size screenDimensions = MediaQuery.of(context).size;
+
+    return Scaffold(
+      body: Container(
+        margin: EdgeInsets.symmetric(
+            horizontal: screenDimensions.width * 0.05,
+            vertical: screenDimensions.height * 0.05),
+        child: Column(
+          children: <Widget>[
+            Container(margin: EdgeInsets.only(top: 25.0)),
+            userNameField(bloc),
+            Container(margin: EdgeInsets.only(top: 25.0)),
+            mobileField(bloc),
+            Container(margin: EdgeInsets.only(top: 25.0)),
+            emailField(bloc),
+            Container(margin: EdgeInsets.only(top: 25.0)),
+            Row(
+              children: [
+                SizedBox(
+                  width: screenDimensions.width * 0.4,
+                  child: passwordField(bloc),
+                ),
+                Container(
+                    margin:
+                        EdgeInsets.only(left: screenDimensions.height * 0.05)),
+                SizedBox(
+                  width: screenDimensions.width * 0.4,
+                  child: confirmPasswordField(bloc),
+                ),
+              ],
+            ),
+            Container(margin: EdgeInsets.only(top: 50.0)),
+            registerButton(bloc, dbInteractor),
+          ],
+        ),
       ),
     );
   }
@@ -62,6 +82,24 @@ class RegistrationScreen extends StatelessWidget {
     );
   }
 
+  Widget mobileField(RegistrationBloc bloc) {
+    return StreamBuilder(
+      stream: bloc.readMobileNo(),
+      builder: (BuildContext context, snapshot) {
+        return TextField(
+          onChanged: bloc.changeMobileNo,
+          keyboardType: TextInputType.phone,
+          decoration: InputDecoration(
+            border: OutlineInputBorder(),
+            hintText: "1234567890",
+            labelText: "Mobile No.",
+            errorText: snapshot.error,
+          ),
+        );
+      },
+    );
+  }
+
   Widget passwordField(RegistrationBloc bloc) {
     return StreamBuilder(
       stream: bloc.readPassword(),
@@ -71,7 +109,7 @@ class RegistrationScreen extends StatelessWidget {
           obscureText: true,
           decoration: InputDecoration(
             border: OutlineInputBorder(),
-            labelText: "Enter your password",
+            labelText: "Password",
             errorText: snapshot.error,
           ),
         );
@@ -88,7 +126,7 @@ class RegistrationScreen extends StatelessWidget {
           obscureText: true,
           decoration: InputDecoration(
             border: OutlineInputBorder(),
-            labelText: "Confirm your password",
+            labelText: "Confirm password",
             errorText: snapshot.error,
           ),
         );
@@ -103,9 +141,12 @@ class RegistrationScreen extends StatelessWidget {
         return RaisedButton(
           child: Text("Register"),
           onPressed: snapshot.hasData
-              ? () {
-                  bloc.registerData(dbInteractor);
-                  //Navigator.pop(context);
+              ? () async {
+                  final String registrationMessage =
+                      await bloc.registerData(dbInteractor);
+                  Scaffold.of(context).showSnackBar(
+                    SnackBar(content: Text(registrationMessage)),
+                  );
                 }
               : null,
         );

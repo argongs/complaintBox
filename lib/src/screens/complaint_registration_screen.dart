@@ -4,7 +4,9 @@ import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import '../blocs/complaint_registration/complaint_registration_provider.dart';
 import '../blocs/complaint_registration/complaint_registration_bloc.dart';
-import '../db/complaint_model.dart';
+import '../db/defect_model.dart';
+import '../db/defect_subtype_model.dart';
+import '../db/severity_model.dart';
 import '../db/database_interface.dart';
 import '../db/database_provider.dart';
 
@@ -22,19 +24,21 @@ class ComplaintRegistrationScreen extends StatelessWidget {
       body: Container(
         margin: EdgeInsets.all(8),
         child: ListView(
+          shrinkWrap: true,
           children: <Widget>[
             imageField(bloc, picker),
-            Container(margin: EdgeInsets.only(top: 8.0)),
-            issueField(bloc),
-            Container(margin: EdgeInsets.only(top: 8.0)),
-            locationField(bloc),
-            Container(margin: EdgeInsets.only(top: 8.0)),
-            defectField(context, bloc),
             Container(margin: EdgeInsets.only(top: 10.0)),
+            locationField(bloc),
+            Container(margin: EdgeInsets.only(top: 10.0)),
+            issueField(bloc, dbInteractor, context),
+            Container(margin: EdgeInsets.only(top: 10.0)),
+            defectField(context, bloc, dbInteractor),
+            Container(margin: EdgeInsets.only(top: 15.0)),
             submitButton(bloc, dbInteractor),
           ],
         ),
       ),
+      resizeToAvoidBottomInset: false,
     );
   }
 
@@ -66,6 +70,7 @@ class ComplaintRegistrationScreen extends StatelessWidget {
                 snapshot.hasData ? Icons.gps_fixed : Icons.gps_not_fixed,
               ),
               iconSize: MediaQuery.of(context).size.width * 0.2,
+              tooltip: "Grab your location",
               onPressed: () => bloc.obtainLocation(),
             ),
             Container(
@@ -95,91 +100,147 @@ class ComplaintRegistrationScreen extends StatelessWidget {
     return StreamBuilder(
       stream: bloc.readImage(),
       builder: (BuildContext context, streamSnapshot) {
-        return Row(
-          children: <Widget>[
-            SizedBox(
-              width: MediaQuery.of(context).size.width * 0.65,
-              child: TextField(
-                controller: TextEditingController(
-                    text: streamSnapshot.hasData ? streamSnapshot.data : "N/A"),
-                enabled: false,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: "Image File",
-                  errorText: streamSnapshot.error,
+        return Column(
+          children: [
+            streamSnapshot.hasData
+                ? Image.file(
+                    File(streamSnapshot.data),
+                    scale: 0.5,
+                  )
+                : Text(""),
+            Row(
+              children: <Widget>[
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.65,
+                  child: TextField(
+                    controller: TextEditingController(
+                        text: streamSnapshot.hasData
+                            ? streamSnapshot.data
+                            : "N/A"),
+                    enabled: false,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: "Image File",
+                      errorText: streamSnapshot.error,
+                    ),
+                  ),
                 ),
-              ),
-            ),
-            Container(
-                margin: EdgeInsets.only(
-                    left: MediaQuery.of(context).size.width * 0.05)),
-            IconButton(
-              icon: Icon(streamSnapshot.hasData
-                  ? Icons.camera
-                  : Icons.camera_outlined),
-              iconSize: MediaQuery.of(context).size.width * 0.2,
-              onPressed: () async {
-                final PickedFile pickedFile =
-                    await picker.getImage(source: ImageSource.camera);
-                if (pickedFile != null) bloc.changeImage(pickedFile.path);
-              },
-            ),
+                Container(
+                    margin: EdgeInsets.only(
+                        left: MediaQuery.of(context).size.width * 0.05)),
+                IconButton(
+                  icon: Icon(streamSnapshot.hasData
+                      ? Icons.camera_alt
+                      : Icons.camera_alt_outlined),
+                  iconSize: MediaQuery.of(context).size.width * 0.2,
+                  tooltip: "Click defect image!",
+                  onPressed: () async {
+                    final PickedFile pickedFile =
+                        await picker.getImage(source: ImageSource.camera);
+                    if (pickedFile != null) bloc.changeImage(pickedFile.path);
+                  },
+                ),
+              ],
+            )
           ],
         );
       },
     );
   }
 
-  Widget issueField(ComplaintRegistrationBloc bloc) {
-    return StreamBuilder(
-      stream: bloc.readIssue(),
-      builder: (BuildContext context, streamSnapshot) {
-        return TextField(
-          onChanged: bloc.changeIssue,
-          decoration: InputDecoration(
-              border: OutlineInputBorder(),
-              hintText: "This road has way too many cracks to count",
-              labelText: "Issue Description",
-              errorText: streamSnapshot.error),
-        );
-      },
-    );
+  Widget issueField(ComplaintRegistrationBloc bloc,
+      DatabaseInterface dbInteractor, BuildContext context) {
+    return Column(children: <Widget>[
+      Row(
+        children: [
+          SizedBox(
+            width: MediaQuery.of(context).size.width * 0.45,
+            child: StreamBuilder(
+              stream: bloc.readShortDescription(),
+              builder: (BuildContext context, streamSnapshot) {
+                return TextField(
+                  onChanged: bloc.changeShortDescription,
+                  decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      hintText: "Crack issue",
+                      labelText: "Issue",
+                      errorText: streamSnapshot.error),
+                );
+              },
+            ),
+          ),
+          Container(
+            margin:
+                EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.05),
+          ),
+          SizedBox(
+            width: MediaQuery.of(context).size.width * 0.45,
+            child: severityLevel(bloc, dbInteractor),
+          ),
+        ],
+      ),
+      Container(
+        margin: EdgeInsets.only(top: 10.0),
+      ),
+      StreamBuilder(
+        stream: bloc.readDescription(),
+        builder: (BuildContext context, streamSnapshot) {
+          return TextField(
+            onChanged: bloc.changeDescription,
+            decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                hintText: "This road has way too many cracks to count",
+                labelText: "Description",
+                errorText: streamSnapshot.error),
+          );
+        },
+      ),
+    ]);
   }
 
-  Widget defectField(BuildContext context, ComplaintRegistrationBloc bloc) {
+  Widget defectField(BuildContext context, ComplaintRegistrationBloc bloc,
+      DatabaseInterface dbInteractor) {
     return Column(
       children: <Widget>[
         Row(
           children: <Widget>[
             SizedBox(
-              width: MediaQuery.of(context).size.width * 0.4,
-              child: severityLevel(bloc),
+              width: MediaQuery.of(context).size.width * 0.45,
+              child: defectType(bloc, dbInteractor),
             ),
             Container(
               margin: EdgeInsets.only(
-                  left: MediaQuery.of(context).size.width * 0.025,
-                  right: MediaQuery.of(context).size.width * 0.025),
+                  left: MediaQuery.of(context).size.width * 0.025),
             ),
             SizedBox(
-              width: MediaQuery.of(context).size.width * 0.4,
-              child: defectType(bloc),
+              width: MediaQuery.of(context).size.width * 0.45,
+              child: defectSubtype(bloc, dbInteractor),
             ),
           ],
         ),
         Row(
           children: <Widget>[
             SizedBox(
-              width: MediaQuery.of(context).size.width * 0.4,
+              width: MediaQuery.of(context).size.width * 0.3,
               child: lengthField(bloc),
             ),
             Container(
               margin: EdgeInsets.only(
-                  left: MediaQuery.of(context).size.width * 0.025,
-                  right: MediaQuery.of(context).size.width * 0.025),
+                left: MediaQuery.of(context).size.width * 0.025,
+              ),
             ),
             SizedBox(
-              width: MediaQuery.of(context).size.width * 0.4,
+              width: MediaQuery.of(context).size.width * 0.3,
               child: widthField(bloc),
+            ),
+            Container(
+              margin: EdgeInsets.only(
+                left: MediaQuery.of(context).size.width * 0.025,
+              ),
+            ),
+            SizedBox(
+              width: MediaQuery.of(context).size.width * 0.3,
+              child: depthField(bloc),
             ),
           ],
         ),
@@ -187,78 +248,155 @@ class ComplaintRegistrationScreen extends StatelessWidget {
     );
   }
 
-  Widget severityLevel(ComplaintRegistrationBloc bloc) {
-    List<String> severityLevels = ComplaintModel.severityMap.keys.toList();
-
-    return StreamBuilder(
-      stream: bloc.readSeverity(),
-      builder: (BuildContext context, streamSnapshot) {
-        return DropdownButton(
-          value: 3,
-          icon: Icon(Icons.arrow_drop_down),
-          items: severityLevels.map<DropdownMenuItem<int>>((String level) {
-            return DropdownMenuItem<int>(
-              value: ComplaintModel.severityMap[level],
-              child: Text(level),
-            );
-          }).toList(),
-          onChanged: bloc.changeSeverity,
-        );
+  Widget severityLevel(
+      ComplaintRegistrationBloc bloc, DatabaseInterface dbInteractor) {
+    return FutureBuilder(
+      future: dbInteractor.obtainSeverities(),
+      builder: (BuildContext context, futureSnapshot) {
+        if (futureSnapshot.connectionState == ConnectionState.done) {
+          bloc.changeSeverity(futureSnapshot.data.first.severityCode);
+          return StreamBuilder(
+            stream: bloc.readSeverity(),
+            builder: (BuildContext context, streamSnapshot) {
+              return DropdownButton<int>(
+                value: streamSnapshot.data,
+                icon: Icon(Icons.arrow_drop_down),
+                items: futureSnapshot.data
+                    .map<DropdownMenuItem<int>>((SeverityModel severity) {
+                  return DropdownMenuItem<int>(
+                    value: severity.severityCode,
+                    child: Text(severity.severityName),
+                  );
+                }).toList(),
+                onChanged: bloc.changeSeverity,
+              );
+            },
+          );
+        } else
+          return LinearProgressIndicator();
       },
     );
   }
 
-  Widget defectType(ComplaintRegistrationBloc bloc) {
-    List<String> defectTypes = ComplaintModel.defectMap.keys.toList();
+  Widget defectType(
+      ComplaintRegistrationBloc bloc, DatabaseInterface dbInteractor) {
+    return FutureBuilder(
+      future: dbInteractor.obtainDefects(),
+      builder: (BuildContext context, futureSnapshot) {
+        if (futureSnapshot.connectionState == ConnectionState.done &&
+            futureSnapshot.hasData) {
+          bloc.changeDefect(futureSnapshot.data.first.defectCode);
+          return StreamBuilder(
+            stream: bloc.readDefect(),
+            builder: (BuildContext context, streamSnapshot) {
+              return DropdownButton<int>(
+                value: streamSnapshot.data,
+                icon: Icon(Icons.arrow_drop_down),
+                items: futureSnapshot.data
+                    .map<DropdownMenuItem<int>>((DefectModel defectTuple) {
+                  return DropdownMenuItem<int>(
+                    value: defectTuple.defectCode,
+                    child: Text(defectTuple.defectName),
+                  );
+                }).toList(),
+                onChanged: bloc.changeDefect,
+              );
+            },
+          );
+        } else
+          return LinearProgressIndicator();
+      },
+    );
+  }
 
+  Widget defectSubtype(
+      ComplaintRegistrationBloc bloc, DatabaseInterface dbInteractor) {
     return StreamBuilder(
       stream: bloc.readDefect(),
-      builder: (BuildContext context, streamSnapshot) {
-        return DropdownButton(
-          value: 1,
-          icon: Icon(Icons.arrow_drop_down),
-          items: defectTypes.map<DropdownMenuItem<int>>((String defect) {
-            return DropdownMenuItem<int>(
-              value: ComplaintModel.defectMap[defect],
-              child: Text(defect),
-            );
-          }).toList(),
-          onChanged: bloc.changeDefect,
-        );
+      builder: (BuildContext context, superStreamSnapshot) {
+        if (superStreamSnapshot.hasData)
+          return FutureBuilder(
+            future: dbInteractor.obtainDefectSubtypes(superStreamSnapshot.data),
+            builder: (BuildContext context, futureSnapshot) {
+              if (futureSnapshot.connectionState == ConnectionState.done) {
+                bloc.changeDefectSubtype(
+                    futureSnapshot.data.first.defectSubtypeCode);
+                return StreamBuilder(
+                  stream: bloc.readDefectSubtype(),
+                  builder: (BuildContext context, streamSnapshot) {
+                    return DropdownButton<int>(
+                      value: streamSnapshot.data,
+                      icon: Icon(Icons.arrow_drop_down),
+                      items: futureSnapshot.data.map<DropdownMenuItem<int>>(
+                          (DefectSubtypeModel defectSubtypeTuple) {
+                        return DropdownMenuItem<int>(
+                          value: defectSubtypeTuple.defectSubtypeCode,
+                          child: Text(defectSubtypeTuple.defectSubtypeName),
+                        );
+                      }).toList(),
+                      onChanged: bloc.changeDefectSubtype,
+                    );
+                  },
+                );
+              } else
+                return LinearProgressIndicator();
+            },
+          );
+        else
+          return LinearProgressIndicator();
       },
     );
   }
 
   Widget lengthField(ComplaintRegistrationBloc bloc) {
     return StreamBuilder(
-        stream: bloc.readLength(),
-        builder: (BuildContext context, streamSnapshot) {
-          return TextField(
-            onChanged: bloc.changeLength,
-            keyboardType: TextInputType.number,
-            decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: "Length (m)",
-                hintText: "10.0",
-                errorText: streamSnapshot.error),
-          );
-        });
+      stream: bloc.readLength(),
+      builder: (BuildContext context, streamSnapshot) {
+        return TextField(
+          onChanged: bloc.changeLength,
+          keyboardType: TextInputType.number,
+          decoration: InputDecoration(
+              border: OutlineInputBorder(),
+              labelText: "Length (m)",
+              hintText: "10.0",
+              errorText: streamSnapshot.error),
+        );
+      },
+    );
   }
 
   Widget widthField(ComplaintRegistrationBloc bloc) {
     return StreamBuilder(
-        stream: bloc.readWidth(),
-        builder: (BuildContext context, streamSnapshot) {
-          return TextField(
-            onChanged: bloc.changeWidth,
-            keyboardType: TextInputType.number,
-            decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: "Width (m)",
-                hintText: "10.0",
-                errorText: streamSnapshot.error),
-          );
-        });
+      stream: bloc.readWidth(),
+      builder: (BuildContext context, streamSnapshot) {
+        return TextField(
+          onChanged: bloc.changeWidth,
+          keyboardType: TextInputType.number,
+          decoration: InputDecoration(
+              border: OutlineInputBorder(),
+              labelText: "Width (m)",
+              hintText: "10.0",
+              errorText: streamSnapshot.error),
+        );
+      },
+    );
+  }
+
+  Widget depthField(ComplaintRegistrationBloc bloc) {
+    return StreamBuilder(
+      stream: bloc.readDepth(),
+      builder: (BuildContext context, streamSnapshot) {
+        return TextField(
+          onChanged: bloc.changeDepth,
+          keyboardType: TextInputType.number,
+          decoration: InputDecoration(
+              border: OutlineInputBorder(),
+              labelText: "Depth (m)",
+              hintText: "10.0",
+              errorText: streamSnapshot.error),
+        );
+      },
+    );
   }
 
   Widget submitButton(
@@ -270,8 +408,8 @@ class ComplaintRegistrationScreen extends StatelessWidget {
           child: Text("Submit"),
           onPressed: streamSnapshot.hasData
               ? () async {
-                  int insertionStatus = await bloc.registerData(dbInteractor);
-                  if (insertionStatus > 1) Navigator.pop(context);
+                  await bloc.registerData(dbInteractor);
+                  Navigator.pop(context);
                 }
               : null,
         );

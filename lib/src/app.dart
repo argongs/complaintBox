@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:sample/src/screens/user_info_screen.dart';
 import 'blocs/complaint_registration/complaint_registration_provider.dart';
 import 'screens/complaint_registration_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/user_registration_screen.dart';
 import 'screens/user_home_screen.dart';
+import 'screens/user_info_screen.dart';
 import 'blocs/login/login_provider.dart';
 import 'blocs/user_registration/registration_provider.dart';
 import 'db/database_provider.dart';
@@ -24,9 +26,7 @@ class App extends StatelessWidget {
         return MaterialPageRoute(
           builder: (BuildContext context) {
             return LoginProvider(
-              child: Scaffold(
-                body: LoginScreen(),
-              ),
+              child: LoginScreen(),
             );
           },
         );
@@ -34,9 +34,7 @@ class App extends StatelessWidget {
         return MaterialPageRoute(
           builder: (BuildContext context) {
             return RegistrationProvider(
-              child: Scaffold(
-                body: RegistrationScreen(),
-              ),
+              child: RegistrationScreen(),
             );
           },
         );
@@ -54,6 +52,10 @@ class App extends StatelessWidget {
             );
           },
         );
+      case "/user_home/user_info":
+        return MaterialPageRoute(builder: (BuildContext context) {
+          return UserInfoScreen();
+        });
       default:
         return null;
     }
