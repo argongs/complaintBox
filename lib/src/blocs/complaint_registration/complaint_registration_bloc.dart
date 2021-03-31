@@ -93,7 +93,8 @@ class ComplaintRegistrationBloc with ComplaintRegistrationValidators {
     _depthController.sink.add(double.parse(newDepthString));
   }
 
-  Future<int> registerData(DatabaseInterface dbInteractor) async {
+  Future<int> registerData(
+      DatabaseInterface dbInteractor, int complaintID) async {
     final List<double> validLocation = _locationController.value;
     final String validImage = _imageController.value;
     final String validDescription = _descriptionController.value;
@@ -107,26 +108,47 @@ class ComplaintRegistrationBloc with ComplaintRegistrationValidators {
 
     // Store the clicked image in the phone memory
     final UserModel loggedInUserData = dbInteractor.getLoggedInUserData();
+    int queryStatus;
 
-    final int insertionStatus = await dbInteractor.insertComplaint(
-      ComplaintModel(
-        userID: loggedInUserData.id,
-        latitude: validLocation[0],
-        longitude: validLocation[1],
-        imagePath: validImage,
-        description: validDescription,
-        shortDescription: validShortDescription,
-        severity: validSeverity,
-        typeOfDefect: validDefect,
-        defectSubtype: validDefectSubtype,
-        length: validLength,
-        width: validWidth,
-        depth: validDepth,
-        status: 0,
-      ),
-    );
+    if (complaintID == 0)
+      queryStatus = await dbInteractor.insertComplaint(
+        ComplaintModel(
+          userID: loggedInUserData.id,
+          latitude: validLocation[0],
+          longitude: validLocation[1],
+          imagePath: validImage,
+          description: validDescription,
+          shortDescription: validShortDescription,
+          severity: validSeverity,
+          typeOfDefect: validDefect,
+          defectSubtype: validDefectSubtype,
+          length: validLength,
+          width: validWidth,
+          depth: validDepth,
+          status: 0,
+        ),
+      );
+    else
+      queryStatus = await dbInteractor.updateComplaint(
+        complaintID,
+        ComplaintModel(
+          userID: loggedInUserData.id,
+          latitude: validLocation[0],
+          longitude: validLocation[1],
+          imagePath: validImage,
+          description: validDescription,
+          shortDescription: validShortDescription,
+          severity: validSeverity,
+          typeOfDefect: validDefect,
+          defectSubtype: validDefectSubtype,
+          length: validLength,
+          width: validWidth,
+          depth: validDepth,
+          status: 0,
+        ),
+      );
 
-    return insertionStatus;
+    return queryStatus;
   }
 
   void obtainLocation() async {

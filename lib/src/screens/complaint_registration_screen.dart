@@ -11,6 +11,13 @@ import '../db/database_interface.dart';
 import '../db/database_provider.dart';
 
 class ComplaintRegistrationScreen extends StatelessWidget {
+  final int purpose;
+  // 'purpose' specifies whether this screen is used for editing or
+  // registering complaint. purpose will be set to 1 for registration and 0 for
+  // editing.
+
+  ComplaintRegistrationScreen({this.purpose});
+
   Widget build(BuildContext context) {
     final ComplaintRegistrationBloc bloc =
         ComplaintRegistrationProvider.of(context);
@@ -408,7 +415,13 @@ class ComplaintRegistrationScreen extends StatelessWidget {
           child: Text("Submit"),
           onPressed: streamSnapshot.hasData
               ? () async {
-                  await bloc.registerData(dbInteractor);
+                  int complaintID = 0;
+
+                  if (this.purpose == 1)
+                    complaintID = dbInteractor.getElaboratedComplaintTuple().id;
+
+                  await bloc.registerData(dbInteractor, complaintID);
+
                   Navigator.pop(context);
                 }
               : null,

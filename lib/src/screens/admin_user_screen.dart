@@ -21,10 +21,10 @@ class AdminScreen extends StatelessWidget {
       appBar: AppBar(
         title: tableName(bloc),
         actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.file_download),
-            onPressed: null,
-          ),
+          // IconButton(
+          //   icon: Icon(Icons.file_download),
+          //   onPressed: null,
+          // ),
           IconButton(
             icon: Icon(Icons.logout),
             onPressed: () => Navigator.pop(context),
@@ -129,6 +129,13 @@ class AdminScreen extends StatelessWidget {
                         return ListTile(
                           title: Text(complaintInfo.shortDescription),
                           subtitle: Text(complaintInfo.defectName),
+                          trailing: Icon(Icons.arrow_right),
+                          onTap: () {
+                            dbInteractor
+                                .setElaboratedComplaintTuple(complaintInfo);
+                            Navigator.pushNamed(
+                                context, "/user_home/complaint_info");
+                          },
                         );
                       },
                     );
@@ -232,8 +239,17 @@ class AdminScreen extends StatelessWidget {
     return ListView(
       children: <Widget>[
         DrawerHeader(
-            child:
-                Text("Hello ${dbInteractor.getLoggedInUserData().userName}!")),
+          child: Text("Hello ${dbInteractor.getLoggedInUserData().userName}!",
+              style: TextStyle(fontWeight: FontWeight.bold)),
+        ),
+        ListTile(
+            title: Text(
+              "Data",
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            onTap: () {
+              Navigator.pop(context);
+            }),
         ListTile(
           title: Text(tableNames[0]),
           onTap: () {
@@ -247,7 +263,36 @@ class AdminScreen extends StatelessWidget {
             bloc.changeTable(1);
             Navigator.pop(context);
           },
-        )
+        ),
+        ListTile(
+          title: Text(
+            "Miscellaneous",
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+        ),
+        ListTile(
+          title: Text("Select account"),
+          onTap: () {
+            bloc.changeGoogleAccount();
+            Navigator.pop(context);
+          },
+        ),
+        ListTile(
+          title: Text("Backup"),
+          onTap: () {
+            Navigator.pop(context);
+          },
+        ),
+        // ListView(
+        //   children: <Widget>[
+        //     ,
+        //   ],
+        // ),
+        // ListView(
+        //   children: <Widget>[
+        //
+        //   ],
+        // ),
       ],
     );
   }

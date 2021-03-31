@@ -58,6 +58,8 @@ class DatabaseInterface {
   }
 
   Future<void> initialiseDatabase() async {
+    print("Database will be stored at " +
+        join(await getDatabasesPath(), databaseName));
     _database = await openDatabase(
       join(await getDatabasesPath(), databaseName),
       version: 1,
@@ -150,7 +152,7 @@ class DatabaseInterface {
             length            DOUBLE      NOT NULL,
             width             DOUBLE      NOT NULL,
             depth             DOUBLE      NOT NULL,
-            status_id         INTEGER     DEFAULT 1,          
+            status_id         INTEGER     DEFAULT 0,          
             FOREIGN KEY (user_id) REFERENCES $userTableName(id),
             FOREIGN KEY (defect_id) REFERENCES $defectTableName(id),
             FOREIGN KEY (subtype_id) REFERENCES $defectSubtypeTableName(id),
@@ -162,7 +164,7 @@ class DatabaseInterface {
         // Create a view which will join complaint, defect and severity tables
         await newDatabase.execute('''
           CREATE VIEW $complaintViewName AS
-          SELECT  complaints.*, defects.name, subtype.name, severity.severityName
+          SELECT  complaints.*, defects.name, subtype.name, severity.severityName, status.name
           FROM  
             $complaintTableName AS complaints,
             $defectTableName AS defects,
@@ -386,12 +388,66 @@ class DatabaseInterface {
       where: 'status_id = ?',
       whereArgs: [statusID],
     );
-
+    print(maps);
     if (maps.length > 0)
       return maps
           .map((complaint) => ElaboratedComplaintModel.fromDB(complaint));
     else
       return null;
+  }
+
+  Future<int> updateComplaint(
+      int complaintID, ComplaintModel complaintData) async {
+    int updateStatus = 0;
+    Map<String, dynamic> updateEntry = {
+      "latitude": complaintData.latitude,
+      "longitude": complaintData.longitude,
+      "description": complaintData.description,
+      "short_description": complaintData.shortDescription,
+      "img_name": complaintData.imagePath,
+      "severity": complaintData.severity,
+      "defect_id": complaintData.typeOfDefect,
+      "subtype_id": complaintData.defectSubtype,
+      "length": complaintData.length,
+      "width": complaintData.width,
+      "depth": complaintData.depth,
+      "status_id": complaintData.status
+    };
+
+    try {
+      updateStatus = await _database.update(
+        complaintTableName,
+        updateEntry,
+        where: "id = ?",
+        whereArgs: [complaintID],
+        conflictAlgorithm: ConflictAlgorithm.abort,
+      );
+    } catch (DatabaseException) {
+      print("Failed to upgrade complaint");
+    }
+
+    return updateStatus;
+  }
+
+  Future<int> upgradeComplaint() async {
+    int upgradeStatus = 0;
+    Map<String, int> updateEntry = {
+      "status_id": (_complaintTuple.complaintStatusID + 1)
+    };
+
+    try {
+      upgradeStatus = await _database.update(
+        complaintTableName,
+        updateEntry,
+        where: "id = ?",
+        whereArgs: [_complaintTuple.id],
+        conflictAlgorithm: ConflictAlgorithm.abort,
+      );
+    } catch (DatabaseException) {
+      print("Failed to upgrade complaint");
+    }
+
+    return upgradeStatus;
   }
 
   Future<dynamic> obtainDefects() async {

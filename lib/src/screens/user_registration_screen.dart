@@ -11,13 +11,15 @@ class RegistrationScreen extends StatelessWidget {
     final Size screenDimensions = MediaQuery.of(context).size;
 
     return Scaffold(
+      appBar: AppBar(
+        title: Text("Registration"),
+      ),
       body: Container(
         margin: EdgeInsets.symmetric(
             horizontal: screenDimensions.width * 0.05,
             vertical: screenDimensions.height * 0.05),
         child: Column(
           children: <Widget>[
-            Container(margin: EdgeInsets.only(top: 25.0)),
             userNameField(bloc),
             Container(margin: EdgeInsets.only(top: 25.0)),
             mobileField(bloc),

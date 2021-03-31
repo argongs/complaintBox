@@ -6,6 +6,8 @@ import 'screens/login_screen.dart';
 import 'screens/user_registration_screen.dart';
 import 'screens/user_home_screen.dart';
 import 'screens/user_info_screen.dart';
+import 'screens/complaint_info_screen.dart';
+import 'screens/map_view_screen.dart';
 import 'blocs/login/login_provider.dart';
 import 'blocs/user_registration/registration_provider.dart';
 import 'db/database_provider.dart';
@@ -48,13 +50,29 @@ class App extends StatelessWidget {
         return MaterialPageRoute(
           builder: (BuildContext context) {
             return ComplaintRegistrationProvider(
-              child: ComplaintRegistrationScreen(),
+              child: ComplaintRegistrationScreen(purpose: 0),
+            );
+          },
+        );
+      case "/user_home/edit_complaint": // Complaint screen
+        return MaterialPageRoute(
+          builder: (BuildContext context) {
+            return ComplaintRegistrationProvider(
+              child: ComplaintRegistrationScreen(purpose: 1),
             );
           },
         );
       case "/user_home/user_info":
         return MaterialPageRoute(builder: (BuildContext context) {
           return UserInfoScreen();
+        });
+      case "/user_home/complaint_info":
+        return MaterialPageRoute(builder: (BuildContext context) {
+          return ComplaintInfoScreen();
+        });
+      case "/user_home/map_view":
+        return MaterialPageRoute(builder: (BuildContext context) {
+          return MapViewScreen();
         });
       default:
         return null;

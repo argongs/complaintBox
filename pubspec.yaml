@@ -36,6 +36,10 @@ dependencies:
   camera:
   image_picker:
   location:
+  googleapis:
+  googleapis_auth:
+  google_sign_in:
+  google_maps_flutter:
 
 dev_dependencies:
   flutter_test:

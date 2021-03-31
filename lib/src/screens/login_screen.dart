@@ -85,7 +85,7 @@ Widget submitButton(LoginBloc bloc, DatabaseInterface dbInteractor) {
 }
 
 Widget registrationArea(BuildContext context) {
-  return Row(
+  return Column(
     mainAxisAlignment: MainAxisAlignment.center,
     children: <Widget>[
       Text("Don't have an account yet?"),

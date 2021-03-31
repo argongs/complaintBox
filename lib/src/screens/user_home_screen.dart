@@ -21,13 +21,14 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
           child: AdminScreen(dbInteractor: dbInteractor),
         );
       case 1: // Active user
-        return activeUserContents(dbInteractor);
+        return activeUserContents(context, dbInteractor);
       case 2: // New user
         return newUserContents(dbInteractor);
     }
   }
 
-  Widget activeUserContents(DatabaseInterface dbInteractor) {
+  Widget activeUserContents(
+      BuildContext context, DatabaseInterface dbInteractor) {
     return Scaffold(
       appBar: AppBar(
         title: Text("Hello ${dbInteractor.getLoggedInUserData().userName}!"),
@@ -38,6 +39,12 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
               setState(() {
                 print("Rebuilt the user home screen");
               });
+            },
+          ),
+          IconButton(
+            icon: Icon(Icons.map),
+            onPressed: () {
+              Navigator.pushNamed(context, "/user_home/map_view");
             },
           ),
         ],
@@ -62,6 +69,12 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
   }
 
   Widget newUserContents(DatabaseInterface dbInteractor) {
+    String message = '''
+    Welcome to this app!\n
+    Currently you are a new user.\n
+    Until the admin acknowledges your existence, you'll have to wait in order to
+    recieve your complaint registration priviledge''';
+
     return Scaffold(
       appBar: AppBar(
         title:
@@ -71,10 +84,13 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text("Welcome to this app!"),
-          Text("Currently you are a new user."),
-          Text("Wait for the admin to acknowledge your existence."),
-          Text("Until then you can simply wait!")
+          Container(
+            padding: EdgeInsets.symmetric(vertical: 5, horizontal: 2.5),
+            child: Text(
+              message,
+              maxLines: 6,
+            ),
+          )
         ],
       ),
     );
@@ -113,6 +129,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
             trailing: Icon(Icons.arrow_right),
             onTap: () {
               dbInteractor.setElaboratedComplaintTuple(complaint);
+              Navigator.pushNamed(context, "/user_home/complaint_info");
             },
           );
         },
