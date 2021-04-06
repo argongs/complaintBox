@@ -3,10 +3,10 @@
 ## Why does this app exist ?
 This app exists to simulate a transparent process of lodging and resolution of issues related to roads.
 
-Along with that, this app demonstrates the usage of the following APIs, i.e.
+Along with that, this app demonstrates the usage of the following tools, i.e.
 
- - [SQLite API](https://sqlite.org/index.html)
- - [Google Map API](https://developers.google.com/maps/documentation/embed/get-started)
+ - [SQLite](https://sqlite.org/index.html)
+ - [Google Map](https://cloud.google.com/maps-platform/)
 
 in [Flutter](https://flutter.dev/).   
 
