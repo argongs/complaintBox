@@ -21,3 +21,15 @@ Take care of the following steps and you'll be able to build [sample](https://gi
  2. Once you're done with the installation of the SDK, set up your editor (preferrably [Android Studio](https://developer.android.com/studio) or [VS Code](https://code.visualstudio.com/)) as well (from [here](https://flutter.dev/docs/get-started/editor?tab=androidstudio)).
  3. You can find the instructions to run the source code in Android Studio [here](https://flutter.dev/docs/development/tools/android-studio#running-and-debugging) and for VS Code [here](https://flutter.dev/docs/development/tools/vs-code#running-and-debugging).
 
+## Using the app
+
+Simply registering as a user won't be enough if you wish to explore the app. To explore the app to it's fullest follow the steps below:
+ 1. Register as a new user
+ 2. Login as the admin by using email as `admin@sample.com` and password as `12345`
+ 3. Go to the new user's list in the admin's dashboard and tap on the account recently created by you
+ 4. Upgrade it's status to 'Active'
+ 5. Log out of the admin account
+ 6. Login with the newly created user credentials
+ 7. Now this new account can allow you to register new complaints and see them on the home screen
+
+> Note that failing to upgrade the status of the newly created user will make the newly created user unable to do anything with his/her account. 
