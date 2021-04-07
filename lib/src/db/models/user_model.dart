@@ -1,3 +1,6 @@
+// user_model.dart contains the model required to represent a user's data
+// acquired from the database
+
 class UserModel {
   String userName;
   String emailID;

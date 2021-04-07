@@ -1,3 +1,6 @@
+// user_home_screen.dart draws the screen which every user will see after
+// successfully logging into the app
+
 import 'package:flutter/material.dart';
 import 'admin_user_screen.dart';
 import '../db/database_provider.dart';
@@ -12,6 +15,8 @@ class UserHomeScreen extends StatefulWidget {
 }
 
 class _UserHomeScreenState extends State<UserHomeScreen> {
+  // Define the type of the screen that the user should see depending on the
+  // user's priviledge level.
   Widget build(BuildContext context) {
     final DatabaseInterface dbInteractor = DatabaseProvider.of(context);
     final int userPriviledge = dbInteractor.getLoggedInUserData().role;
@@ -27,6 +32,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
     }
   }
 
+  // Draw the screen for the user's with 'active' level of priviledge
   Widget activeUserContents(
       BuildContext context, DatabaseInterface dbInteractor) {
     return Scaffold(
@@ -68,6 +74,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
     );
   }
 
+  // Draw the screen for the user's with 'new' level of priviledge
   Widget newUserContents(DatabaseInterface dbInteractor) {
     String message = '''
     Welcome to this app!\n
@@ -96,6 +103,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
     );
   }
 
+  // Draw the complaint list, if the user has registered complaints
   Widget complaintList(queryResults, DatabaseInterface dbInteractor) {
     if (queryResults == null)
       return Column(

@@ -1,3 +1,5 @@
+// login_bloc.dart holds the code for the backend of the login form
+
 import 'dart:async';
 import 'package:rxdart/rxdart.dart';
 import 'login_validators.dart';

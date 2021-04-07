@@ -1,8 +1,11 @@
+// registration_bloc.dart holds the code for the backend of the registration
+// form for the new users
+
 import 'dart:async';
 import 'package:rxdart/rxdart.dart';
 import 'registration_validators.dart';
 import '../../db/database_interface.dart';
-import '../../db/user_model.dart';
+import '../../db/models/user_model.dart';
 
 class RegistrationBloc with RegistrationValidators {
   final _userNameController = BehaviorSubject<String>();
@@ -49,6 +52,7 @@ class RegistrationBloc with RegistrationValidators {
   void changeConfirmPassword(String newConfirmPassword) =>
       _confirmPasswordController.sink.add(newConfirmPassword);
 
+  // For registering new data into the database
   Future<String> registerData(DatabaseInterface dbInteractor) async {
     final String validUserName = _userNameController.value;
     final String validEmail = _emailController.value;

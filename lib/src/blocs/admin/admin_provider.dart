@@ -1,3 +1,7 @@
+// admin_provider.dart makes creates a widget which holds an instance to
+// the admin screen's backend and makes the functions defined over there
+// available to the admin screen frontend buttons
+
 import 'package:flutter/material.dart';
 import 'admin_bloc.dart';
 

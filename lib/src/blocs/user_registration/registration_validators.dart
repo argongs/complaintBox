@@ -1,3 +1,6 @@
+// registration_validators.dart defines the validators used by the registration
+// form's backend for validating the data entered by the user.
+
 import 'dart:async';
 
 class RegistrationValidators {
@@ -35,6 +38,7 @@ class RegistrationValidators {
         sink.addError(incorrectEmailError);
     },
   );
+
   //Validate Mobile No.
   final mobileNoValidator = StreamTransformer<String, String>.fromHandlers(
       handleData: (mobile, sink) {
@@ -57,6 +61,7 @@ class RegistrationValidators {
     },
   );
 
+  // Validate confirm password
   final confirmPasswordValidator =
       StreamTransformer<List<String>, String>.fromHandlers(
     handleData: (passwordPair, sink) {

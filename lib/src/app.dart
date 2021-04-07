@@ -1,3 +1,7 @@
+// 'app.dart' is the starting point of the app, i.e. it holds the code to draw
+// the function call to the first screen seen by the user. It also contains the
+// routing information required to route the app to appropriate screens.
+
 import 'package:flutter/material.dart';
 import 'package:sample/src/screens/user_info_screen.dart';
 import 'blocs/complaint_registration/complaint_registration_provider.dart';
@@ -46,7 +50,7 @@ class App extends StatelessWidget {
             return UserHomeScreen();
           },
         );
-      case "/user_home/register_complaint": // Complaint screen
+      case "/user_home/register_complaint": // Complaint registration screen
         return MaterialPageRoute(
           builder: (BuildContext context) {
             return ComplaintRegistrationProvider(
@@ -54,7 +58,7 @@ class App extends StatelessWidget {
             );
           },
         );
-      case "/user_home/edit_complaint": // Complaint screen
+      case "/user_home/edit_complaint": // Complaint editing screen
         return MaterialPageRoute(
           builder: (BuildContext context) {
             return ComplaintRegistrationProvider(
@@ -62,15 +66,15 @@ class App extends StatelessWidget {
             );
           },
         );
-      case "/user_home/user_info":
+      case "/user_home/user_info": // User Info screen
         return MaterialPageRoute(builder: (BuildContext context) {
           return UserInfoScreen();
         });
-      case "/user_home/complaint_info":
+      case "/user_home/complaint_info": // Complaint Info screen
         return MaterialPageRoute(builder: (BuildContext context) {
           return ComplaintInfoScreen();
         });
-      case "/user_home/map_view":
+      case "/user_home/map_view": // Map view of complaints
         return MaterialPageRoute(builder: (BuildContext context) {
           return MapViewScreen();
         });

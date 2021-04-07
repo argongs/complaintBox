@@ -1,3 +1,5 @@
+// complaint_model.dart holds the model for representing complaint data
+
 class ComplaintModel {
   int id, userID;
   DateTime timestamp;

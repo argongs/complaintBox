@@ -1,7 +1,9 @@
+// user_info_screen.dart draws out the basic info. related to a user
+
 import 'package:flutter/material.dart';
 import '../db/database_provider.dart';
 import '../db/database_interface.dart';
-import '../db/user_model.dart';
+import '../db/models/user_model.dart';
 
 class UserInfoScreen extends StatelessWidget {
   Widget build(BuildContext context) {

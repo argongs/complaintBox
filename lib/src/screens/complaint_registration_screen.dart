@@ -1,12 +1,15 @@
+// complaint_registration_screen.dart draws the form which allows the user to
+// register complaints.
+
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import '../blocs/complaint_registration/complaint_registration_provider.dart';
 import '../blocs/complaint_registration/complaint_registration_bloc.dart';
-import '../db/defect_model.dart';
-import '../db/defect_subtype_model.dart';
-import '../db/severity_model.dart';
+import '../db/models/defect_model.dart';
+import '../db/models/defect_subtype_model.dart';
+import '../db/models/severity_model.dart';
 import '../db/database_interface.dart';
 import '../db/database_provider.dart';
 
@@ -49,6 +52,7 @@ class ComplaintRegistrationScreen extends StatelessWidget {
     );
   }
 
+  // Draws the field which will be used to obtain location
   Widget locationField(ComplaintRegistrationBloc bloc) {
     return StreamBuilder(
       stream: bloc.readLocation(),
@@ -103,6 +107,7 @@ class ComplaintRegistrationScreen extends StatelessWidget {
     );
   }
 
+  // Draws the field which will be used to obtain image
   Widget imageField(ComplaintRegistrationBloc bloc, ImagePicker picker) {
     return StreamBuilder(
       stream: bloc.readImage(),
@@ -155,6 +160,7 @@ class ComplaintRegistrationScreen extends StatelessWidget {
     );
   }
 
+  // Draws the field which will be used to obtain issue description
   Widget issueField(ComplaintRegistrationBloc bloc,
       DatabaseInterface dbInteractor, BuildContext context) {
     return Column(children: <Widget>[
@@ -205,6 +211,8 @@ class ComplaintRegistrationScreen extends StatelessWidget {
     ]);
   }
 
+  // Draws the outline of the container which will hold the fields
+  // associated with defect-specific information
   Widget defectField(BuildContext context, ComplaintRegistrationBloc bloc,
       DatabaseInterface dbInteractor) {
     return Column(
@@ -255,6 +263,7 @@ class ComplaintRegistrationScreen extends StatelessWidget {
     );
   }
 
+  // Draws the field which will be used to obtain defect severity
   Widget severityLevel(
       ComplaintRegistrationBloc bloc, DatabaseInterface dbInteractor) {
     return FutureBuilder(
@@ -285,6 +294,7 @@ class ComplaintRegistrationScreen extends StatelessWidget {
     );
   }
 
+  // Draws the field which will be used to obtain defect type
   Widget defectType(
       ComplaintRegistrationBloc bloc, DatabaseInterface dbInteractor) {
     return FutureBuilder(
@@ -316,6 +326,7 @@ class ComplaintRegistrationScreen extends StatelessWidget {
     );
   }
 
+  // Draws the field which will be used to obtain defect subtype
   Widget defectSubtype(
       ComplaintRegistrationBloc bloc, DatabaseInterface dbInteractor) {
     return StreamBuilder(
@@ -355,6 +366,7 @@ class ComplaintRegistrationScreen extends StatelessWidget {
     );
   }
 
+  // Draws the field which will be used to obtain length of the defect
   Widget lengthField(ComplaintRegistrationBloc bloc) {
     return StreamBuilder(
       stream: bloc.readLength(),
@@ -372,6 +384,7 @@ class ComplaintRegistrationScreen extends StatelessWidget {
     );
   }
 
+  // Draws the field which will be used to obtain width of the defect
   Widget widthField(ComplaintRegistrationBloc bloc) {
     return StreamBuilder(
       stream: bloc.readWidth(),
@@ -389,6 +402,7 @@ class ComplaintRegistrationScreen extends StatelessWidget {
     );
   }
 
+  // Draws the field which will be used to obtain depth of the defect
   Widget depthField(ComplaintRegistrationBloc bloc) {
     return StreamBuilder(
       stream: bloc.readDepth(),
@@ -406,6 +420,8 @@ class ComplaintRegistrationScreen extends StatelessWidget {
     );
   }
 
+  // Draws the submit button and maps it to the function for complaint
+  // registration
   Widget submitButton(
       ComplaintRegistrationBloc bloc, DatabaseInterface dbInteractor) {
     return StreamBuilder(

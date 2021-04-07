@@ -1,3 +1,7 @@
+// complaint_registration_validators.dart defines the validators used by the
+// complaint registration form's backend for validating the data entered
+// by the user.
+
 import 'dart:async';
 
 class ComplaintRegistrationValidators {

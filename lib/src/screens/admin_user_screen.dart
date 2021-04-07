@@ -1,9 +1,12 @@
+// admin_user_screen.dart holds the code to paint the screen that will be
+// seen by the admin users.
+
 import 'package:flutter/material.dart';
 import '../db/database_interface.dart';
-import '../db/role_model.dart';
-import '../db/elaborated_complaint_model.dart';
-import '../db/user_model.dart';
-import '../db/complaint_status_model.dart';
+import '../db/models/role_model.dart';
+import '../db/models/elaborated_complaint_model.dart';
+import '../db/models/user_model.dart';
+import '../db/models/complaint_status_model.dart';
 import '../blocs/admin/admin_bloc.dart';
 import '../blocs/admin/admin_provider.dart';
 
@@ -37,6 +40,8 @@ class AdminScreen extends StatelessWidget {
     );
   }
 
+  // Fetches and draws the table name whose contents are displayed on the
+  // admin's screen
   Widget tableName(AdminBloc bloc) {
     return StreamBuilder(
       stream: bloc.readTableName(),
@@ -52,6 +57,8 @@ class AdminScreen extends StatelessWidget {
     );
   }
 
+  // Draws user list or complaint list depending upon the table name
+  // opted by the user
   Widget blocifiedScaffoldBody(AdminBloc bloc) {
     return StreamBuilder(
         stream: bloc.readTableName(),
@@ -63,6 +70,7 @@ class AdminScreen extends StatelessWidget {
         });
   }
 
+  // Draws the user list
   Widget userData(AdminBloc bloc) {
     return StreamBuilder(
         stream: bloc.readUserTableSubtype(),
@@ -106,6 +114,7 @@ class AdminScreen extends StatelessWidget {
         });
   }
 
+  // Draws complaint list
   Widget complaintData(AdminBloc bloc) {
     return StreamBuilder(
         stream: bloc.readComplaintTableSubtype(),
@@ -153,6 +162,7 @@ class AdminScreen extends StatelessWidget {
         });
   }
 
+  // Draw the table subtypes
   Widget tableSubtype(AdminBloc bloc) {
     return StreamBuilder(
         stream: bloc.readTableName(),
@@ -169,6 +179,7 @@ class AdminScreen extends StatelessWidget {
         });
   }
 
+  // Draw bottom navigation bar filled with user table subtypes
   Widget userTableSubtypes(AdminBloc bloc) {
     return StreamBuilder(
         stream: bloc.readUserTableSubtype(),
@@ -201,6 +212,7 @@ class AdminScreen extends StatelessWidget {
         });
   }
 
+  // Draw bottom navigation bar filled with complaint table subtypes
   Widget complaintTableSubtypes(AdminBloc bloc) {
     return StreamBuilder(
         stream: bloc.readComplaintTableSubtype(),
@@ -235,6 +247,7 @@ class AdminScreen extends StatelessWidget {
         });
   }
 
+  // Draw the drawer menu
   Widget drawerList(BuildContext context, AdminBloc bloc) {
     return ListView(
       children: <Widget>[
@@ -251,14 +264,14 @@ class AdminScreen extends StatelessWidget {
               Navigator.pop(context);
             }),
         ListTile(
-          title: Text(tableNames[0]),
+          title: Text(tableNames[0]), // Link to the user's table data
           onTap: () {
             bloc.changeTable(0);
             Navigator.pop(context);
           },
         ),
         ListTile(
-          title: Text(tableNames[1]),
+          title: Text(tableNames[1]), // Link to the complaint's table data
           onTap: () {
             bloc.changeTable(1);
             Navigator.pop(context);
@@ -271,28 +284,20 @@ class AdminScreen extends StatelessWidget {
           ),
         ),
         ListTile(
-          title: Text("Select account"),
+          title:
+              Text("Backup"), // Link to data backup (currently dysfunctional)
           onTap: () {
             bloc.changeGoogleAccount();
             Navigator.pop(context);
           },
         ),
         ListTile(
-          title: Text("Backup"),
+          title:
+              Text("Restore"), // Link to data restore (currently dysfunctional)
           onTap: () {
             Navigator.pop(context);
           },
         ),
-        // ListView(
-        //   children: <Widget>[
-        //     ,
-        //   ],
-        // ),
-        // ListView(
-        //   children: <Widget>[
-        //
-        //   ],
-        // ),
       ],
     );
   }

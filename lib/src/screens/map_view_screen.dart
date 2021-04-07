@@ -1,7 +1,10 @@
+// map_view_screen.dart draws the screen which will show a map containing
+// markers to the locations at whih the user has registered complaints.
+
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:sample/src/db/elaborated_complaint_model.dart';
+import 'package:sample/src/db/models/elaborated_complaint_model.dart';
 import '../db/database_interface.dart';
 import '../db/database_provider.dart';
 

@@ -1,3 +1,6 @@
+// role_model.dart contains the model required to represent user's priviledge
+// data or roles acquired from the database
+
 class RoleModel {
   int id;
   String name;

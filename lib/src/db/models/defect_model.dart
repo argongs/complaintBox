@@ -1,3 +1,6 @@
+// defect_model.dart contains the model required to represent defect data
+// acquired from the database
+
 class DefectModel {
   int defectCode;
   String defectName;

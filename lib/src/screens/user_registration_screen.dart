@@ -1,3 +1,6 @@
+// user_registration_screen.dart draws the screen which allows a user to
+// register himself or the herself into the app
+
 import 'package:flutter/material.dart';
 import '../db/database_interface.dart';
 import '../db/database_provider.dart';
@@ -5,6 +8,7 @@ import '../blocs/user_registration/registration_bloc.dart';
 import '../blocs/user_registration/registration_provider.dart';
 
 class RegistrationScreen extends StatelessWidget {
+  // Draw the basic container for holding the registration fields
   Widget build(BuildContext context) {
     final RegistrationBloc bloc = RegistrationProvider.of(context);
     final DatabaseInterface dbInteractor = DatabaseProvider.of(context);
@@ -49,6 +53,7 @@ class RegistrationScreen extends StatelessWidget {
     );
   }
 
+  // Draw the field for obtaining user name from the user
   Widget userNameField(RegistrationBloc bloc) {
     return StreamBuilder(
       stream: bloc.readUserName(),
@@ -66,6 +71,7 @@ class RegistrationScreen extends StatelessWidget {
     );
   }
 
+  // Draw the field for obtaining email from the user
   Widget emailField(RegistrationBloc bloc) {
     return StreamBuilder(
       stream: bloc.readEmail(),
@@ -84,6 +90,7 @@ class RegistrationScreen extends StatelessWidget {
     );
   }
 
+  // Draw the field for obtaining mobile no. from the user
   Widget mobileField(RegistrationBloc bloc) {
     return StreamBuilder(
       stream: bloc.readMobileNo(),
@@ -102,6 +109,7 @@ class RegistrationScreen extends StatelessWidget {
     );
   }
 
+  // Draw the field for obtaining password from the user
   Widget passwordField(RegistrationBloc bloc) {
     return StreamBuilder(
       stream: bloc.readPassword(),
@@ -119,6 +127,7 @@ class RegistrationScreen extends StatelessWidget {
     );
   }
 
+  // Draw the field for obtaining confirmed password from the user
   Widget confirmPasswordField(RegistrationBloc bloc) {
     return StreamBuilder(
       stream: bloc.readConfirmPassword(),
@@ -136,6 +145,7 @@ class RegistrationScreen extends StatelessWidget {
     );
   }
 
+  // Draw the register button and map it to the registration module
   Widget registerButton(RegistrationBloc bloc, DatabaseInterface dbInteractor) {
     return StreamBuilder(
       stream: bloc.canRegister(),

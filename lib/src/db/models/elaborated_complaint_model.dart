@@ -1,3 +1,6 @@
+// elaborated_complaint_model.dart contains the model required to represent
+// elaborated complaint data acquired from the database
+
 class ElaboratedComplaintModel {
   int id, complaintStatusID;
   DateTime timestamp;

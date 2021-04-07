@@ -1,3 +1,7 @@
+// database_provider.dart defines a widget capable of holding an
+// instance of the database interface. This allows the children widgets to
+// access the same database instance.
+
 import 'package:flutter/material.dart';
 import 'database_interface.dart';
 

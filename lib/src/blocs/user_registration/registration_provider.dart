@@ -1,3 +1,7 @@
+// registration_provider.dart defines a widget which is capable of holding
+// an instance of the registration form's backend. This allows the registration
+// form's frontend to easily call the functions from the backend.
+
 import 'package:flutter/material.dart';
 import 'registration_bloc.dart';
 

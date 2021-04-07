@@ -1,3 +1,6 @@
+// complaint_model.dart holds the model for representing complaint status
+// data obtained from the database
+
 class ComplaintStatusModel {
   int id;
   String name;

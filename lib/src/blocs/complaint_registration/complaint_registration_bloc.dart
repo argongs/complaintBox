@@ -1,10 +1,13 @@
+// complaint_registration_bloc.dart holds the code for the backend of the
+// complaint registration form
+
 import 'dart:async';
 import 'package:rxdart/rxdart.dart';
 import 'package:location/location.dart';
 import 'complaint_registration_validators.dart';
 import '../../db/database_interface.dart';
-import '../../db/complaint_model.dart';
-import '../../db/user_model.dart';
+import '../../db/models/complaint_model.dart';
+import '../../db/models/user_model.dart';
 
 class ComplaintRegistrationBloc with ComplaintRegistrationValidators {
   final _locationController = BehaviorSubject<List<double>>();

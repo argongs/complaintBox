@@ -1,14 +1,17 @@
+// database_interface.dart is the place where all database related functions
+// are defined. It acts as an interface to the database.
+
 import 'dart:async';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
-import 'user_model.dart';
-import 'defect_model.dart';
-import 'defect_subtype_model.dart';
-import 'severity_model.dart';
-import 'complaint_model.dart';
-import 'elaborated_complaint_model.dart';
-import 'complaint_status_model.dart';
-import 'role_model.dart';
+import 'models/user_model.dart';
+import 'models/defect_model.dart';
+import 'models/defect_subtype_model.dart';
+import 'models/severity_model.dart';
+import 'models/complaint_model.dart';
+import 'models/elaborated_complaint_model.dart';
+import 'models/complaint_status_model.dart';
+import 'models/role_model.dart';
 
 class DatabaseInterface {
   Database _database;
@@ -236,7 +239,7 @@ class DatabaseInterface {
     );
   }
 
-  // For insertion of data into the database
+  // For insertion of new user data into the database
   Future<int> insertUser(UserModel userModel) async {
     int insertionStatus = 0;
 
@@ -253,6 +256,7 @@ class DatabaseInterface {
     return insertionStatus;
   }
 
+  // For insertion of new complaint data into the database
   Future<int> insertComplaint(ComplaintModel complaintModel) async {
     int insertionStatus = 0;
 
@@ -269,7 +273,7 @@ class DatabaseInterface {
     return insertionStatus;
   }
 
-  //For checking if a given email id exists
+  // For checking if a given email id exists
   Future<bool> checkIfEmailExists(String email) async {
     final List<Map<String, dynamic>> maps = await _database.query(
       userTableName,
@@ -284,7 +288,7 @@ class DatabaseInterface {
       return false;
   }
 
-  //For returning of data from the database
+  // For returning of data from the database
   Future<dynamic> obtainUser(String email, String password) async {
     try {
       final List<Map<String, dynamic>> maps = await _database.query(
@@ -309,6 +313,7 @@ class DatabaseInterface {
     }
   }
 
+  // For obtaining the predefined user roles from the database
   Future<dynamic> obtainUserRoles() async {
     final List<Map<String, dynamic>> maps = await _database.query(
       roleTableName,
@@ -321,6 +326,7 @@ class DatabaseInterface {
       return null;
   }
 
+  // For obtaining user data by their role
   Future<dynamic> obtainUserByRole(int roleID) async {
     final List<Map<String, dynamic>> maps = await _database.query(
       userTableName,
@@ -335,6 +341,7 @@ class DatabaseInterface {
       return null;
   }
 
+  // For upgrading user's priviledge
   Future<int> upgradeUser() async {
     int upgradeStatus = 0;
     Map<String, int> updateEntry = {"role": 1};
@@ -354,6 +361,7 @@ class DatabaseInterface {
     return upgradeStatus;
   }
 
+  // For obtaining the complaints present in the database
   Future<dynamic> obtainComplaints() async {
     final List<Map<String, dynamic>> maps = await _database.query(
       complaintTableName,
@@ -369,6 +377,8 @@ class DatabaseInterface {
       return null;
   }
 
+  // For obtaining different statuses that could be assigned to a complaint
+  // from the database
   Future<dynamic> obtainComplaintStatusType() async {
     final List<Map<String, dynamic>> maps = await _database.query(
       complaintStatusTableName,
@@ -381,6 +391,7 @@ class DatabaseInterface {
       return null;
   }
 
+  // For obtaining complaints by status from the database
   Future<dynamic> obtainComplaintsByStatus(int statusID) async {
     final List<Map<String, dynamic>> maps = await _database.query(
       complaintViewName,
@@ -396,6 +407,7 @@ class DatabaseInterface {
       return null;
   }
 
+  // For obtaining updating complaint details in the database
   Future<int> updateComplaint(
       int complaintID, ComplaintModel complaintData) async {
     int updateStatus = 0;
@@ -429,6 +441,7 @@ class DatabaseInterface {
     return updateStatus;
   }
 
+  // For upgrading complaint's status from the database
   Future<int> upgradeComplaint() async {
     int upgradeStatus = 0;
     Map<String, int> updateEntry = {
@@ -450,6 +463,7 @@ class DatabaseInterface {
     return upgradeStatus;
   }
 
+  // For obtaining different types of defects defined in the database
   Future<dynamic> obtainDefects() async {
     final List<Map<String, dynamic>> maps = await _database.query(
       defectTableName,
@@ -463,6 +477,7 @@ class DatabaseInterface {
       return null;
   }
 
+  // For obtaining different defect subtypes defined in the database
   Future<dynamic> obtainDefectSubtypes(int defectCode) async {
     final List<Map<String, dynamic>> maps = await _database.query(
         defectSubtypeTableName,
@@ -477,6 +492,7 @@ class DatabaseInterface {
       return null;
   }
 
+  // For obtaining different defect severities defined in the database
   Future<dynamic> obtainSeverities() async {
     final List<Map<String, dynamic>> maps = await _database.query(
       severityTableName,
@@ -489,6 +505,8 @@ class DatabaseInterface {
       return null;
   }
 
+  // For obtaining elaborated complaints (after joining it with other tables)
+  // from the database
   Future<dynamic> obtainElaboratedComplaints() async {
     final List<Map<String, dynamic>> maps = await _database.query(
       complaintViewName,

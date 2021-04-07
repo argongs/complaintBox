@@ -1,8 +1,11 @@
+// complaint_info_screen.dart draws the screen which will display info
+// related to a screen.
+
 import 'dart:io';
 import 'package:flutter/material.dart';
 import '../db/database_provider.dart';
 import '../db/database_interface.dart';
-import '../db/elaborated_complaint_model.dart';
+import '../db/models/elaborated_complaint_model.dart';
 
 class ComplaintInfoScreen extends StatelessWidget {
   Widget build(BuildContext context) {
